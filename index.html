@@ -2,939 +2,309 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Token Grant Calculator</title>
+  <title>Simple Token Grant Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
-    :root {
-      --text-primary: #111827;
-      --text-secondary: #4B5563;
-      --border: #E5E7EB;
-      --background: #F9FAFB;
-
-      --danger: #D92D20;
-      --success: #079455;
-
-      --radius-card: 24px;
-      --radius-control: 8px;
-
-      --shadow-card: 0px 4px 6px -2px #10182808, 0px 12px 16px -4px #10182814;
-      --focus: 0 0 0 4px rgba(22, 70, 206, 0.18);
-
-      /* 4px scale */
-      --space-8: 8px;
-      --space-12: 12px;
-      --space-16: 16px;
-      --space-20: 20px;
-      --space-24: 24px;
-      --space-28: 28px;
-      --space-32: 32px;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body { height: 100%; }
-
     body {
-      font-family: "Inter Display", Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 16px;
-      line-height: 1.5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050816;
+      color: #f9fafb;
       margin: 0;
-      color: var(--text-primary);
-      background: var(--background);
+      padding: 24px;
+      display: flex;
+      justify-content: center;
     }
 
-    /* Webflow-style layout primitives (kept small on purpose) */
-    .page-wrapper { min-height: 100%; padding: 1rem; }
-    .container { max-width: 1040px; margin: 0 auto; }
-    .section { padding: 0; }
+    .wrapper {
+      max-width: 800px;
+      width: 100%;
+    }
 
-    .grid-2col {
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    p.subtitle {
+      margin: 0 0 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .card {
+      background: #0b1120;
+      border-radius: 16px;
+      padding: 20px 24px;
+      border: 1px solid #1f2937;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
       display: grid;
-      /* One column on all devices (consistent behavior) */
-      grid-template-columns: 1fr;
-      gap: var(--space-20);
-      align-items: start;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px 16px;
     }
 
-    @media (max-width: 991px) {
-      .grid-2col { grid-template-columns: 1fr; }
-    }
-
-    .card, .card-2 {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: var(--space-24);
-      box-shadow: var(--shadow-card);
-      background: #fff;
-      max-width: 40rem;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .stack { display: flex; flex-direction: column; gap: var(--space-16); }
-    .stack-lg { gap: var(--space-24); }
-    .row { display: flex; gap: var(--space-12); align-items: center; flex-wrap: wrap; }
-    .row-between { justify-content: space-between; }
-
-    .heading-xl { font-size: 28px; line-height: 1.2; margin: 0; letter-spacing: -0.02em; }
-    .heading-md { font-size: 18px; line-height: 1.3; margin: 0; letter-spacing: -0.01em; }
-    .text-muted { color: var(--text-secondary); margin: 0; }
-    .text-sm { font-size: 13px; line-height: 1.5; }
-
-    .form-field { display: grid; gap: var(--space-8); }
-    .label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-
-    .input, .select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      height: 56px;
-      padding: 0 var(--space-16);
-      font-size: 16px;
-      outline: none;
-      background: #fff;
-      color: var(--text-primary);
-      transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
-    }
-
-    .input:focus, .select:focus { box-shadow: var(--focus); border-color: rgba(22, 70, 206, 0.35); }
-
-    .help, .error {
-      font-size: 13px;
-      margin: 0;
-    }
-
-    .help { color: var(--text-secondary); }
-    .error { color: var(--danger); display: none; }
-    .field-invalid .input, .field-invalid .select { border-color: rgba(217, 45, 32, 0.45); }
-    .field-invalid .error { display: block; }
-
-    .segmented {
-      display: inline-flex;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 4px;
-      background: rgba(17, 24, 39, 0.03);
+    .form-row {
+      display: flex;
+      flex-direction: column;
       gap: 4px;
     }
 
-    .segmented-button {
-      border: 0;
-      border-radius: 999px;
-      padding: 8px 12px;
+    label {
       font-size: 13px;
-      background: transparent;
-      color: var(--text-secondary);
+      opacity: 0.8;
+    }
+
+    input {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #f9fafb;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      background: #22c55e;
+      color: #022c22;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      font-size: 14px;
     }
 
-    .segmented-button[aria-pressed="true"] {
-      background: #fff;
-      color: var(--text-primary);
-      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
-    }
-
-    .button {
-      width: 100%;
-      height: 56px;
-      border: 0;
-      background: linear-gradient(to bottom, #3D65D6 0%, #1646CE 100%);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      border-radius: var(--radius-control);
-      padding: 0 var(--space-16);
-      cursor: pointer;
-      transition: transform 120ms ease, opacity 120ms ease;
-      box-shadow: none;
-    }
-
-    .button:active { transform: translateY(0px); }
-    .button:disabled { cursor: not-allowed; transform: none; }
-
-    /* Results: hidden until valid input + smooth reveal */
-    .results {
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: max-height 360ms ease, opacity 240ms ease, transform 240ms ease;
-      will-change: max-height, opacity, transform;
-      pointer-events: none;
-    }
-
-    .results.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+    button:hover {
+      opacity: 0.9;
     }
 
     .results-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
-      margin-top: var(--space-12);
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px 16px;
     }
 
-    .metric {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: var(--space-16);
-      background: rgba(17, 24, 39, 0.02);
+    .result-item {
+      background: #020617;
+      border-radius: 12px;
+      padding: 12px 14px;
+      border: 1px solid #111827;
     }
 
-    .metric-spaced { margin-top: var(--space-12); }
-
-    .metric .k { font-size: 13px; color: var(--text-secondary); margin: 0 0 6px; }
-    .metric .v { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-8);
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(17, 24, 39, 0.02);
+    .result-label {
       font-size: 12px;
-      color: var(--text-secondary);
-      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      margin-bottom: 4px;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--success);
-      display: inline-block;
+    .result-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #facc15;
+    }
+
+    .result-sub {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    .disclaimer {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <div class="container section">
-      <div class="stack stack-lg">
-        <div class="grid-2col">
-          <!-- Calculator -->
-          <div class="card">
-            <div class="stack">
-              <div class="row row-between">
-                <h2 class="heading-md">Your token grant</h2>
-                <div class="segmented" role="group" aria-label="Results view">
-                  <button class="segmented-button" type="button" id="viewTotal" aria-pressed="true">Total</button>
-                  <button class="segmented-button" type="button" id="viewMonthly" aria-pressed="false">Monthly</button>
-                </div>
-              </div>
+  <div class="wrapper">
+    <h1>Token Grant Calculator</h1>
+    <p class="subtitle">
+      Simple view of what your token grant is worth today, how much vests each month, and a rough tax estimate.
+    </p>
 
-              <div class="form-field" id="countryField">
-                <label class="label" for="country">Tax residency (estimated)</label>
-                <select class="select" id="country" name="country" required>
-                  <option value="">Select a country</option>
-                </select>
-                <p class="error" id="countryError">Please select a country.</p>
-              </div>
+    <!-- INPUTS -->
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="grantTokens">Total token grant</label>
+          <input id="grantTokens" type="number" placeholder="e.g. 50000" />
+        </div>
 
-              <div class="form-field" id="grantField">
-                <label class="label" for="grantTokens">Token grant (tokens)</label>
-                <input class="input" id="grantTokens" name="grantTokens" inputmode="decimal" autocomplete="off" placeholder="e.g. 10000" />
-                <p class="error" id="grantError">Enter a valid token amount greater than 0.</p>
-              </div>
+        <div class="form-row">
+          <label for="currentPrice">Current token price (USD)</label>
+          <input id="currentPrice" type="number" step="0.0001" placeholder="e.g. 0.25" />
+        </div>
 
-              <div class="form-field" id="currentPriceField">
-                <label class="label" for="currentPrice">Token price today</label>
-                <input class="input" id="currentPrice" name="currentPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 1.25" />
-                <p class="help">Used to estimate “what your tokens are worth today”.</p>
-                <p class="error" id="currentPriceError">Enter a valid price (0 or greater).</p>
-              </div>
+        <div class="form-row">
+          <label for="vestingYears">Vesting length (years)</label>
+          <input id="vestingYears" type="number" step="0.5" placeholder="e.g. 4" />
+        </div>
 
-              <div class="form-field" id="expectedValuationField">
-                <label class="label" for="expectedValuation">Expected valuation at exit</label>
-                <input class="input" id="expectedValuation" name="expectedValuation" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-                <p class="help">Used to estimate an implied future token price (valuation ÷ fully diluted supply).</p>
-                <p class="error" id="expectedValuationError">Enter a valid valuation greater than 0.</p>
-              </div>
+        <div class="form-row">
+          <label for="cliffMonths">Cliff (months)</label>
+          <input id="cliffMonths" type="number" placeholder="e.g. 12" />
+        </div>
 
-              <div class="form-field" id="fdvSupplyField">
-                <label class="label" for="fdvSupply">Fully diluted token supply</label>
-                <input class="input" id="fdvSupply" name="fdvSupply" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-                <p class="help">Total supply at full dilution (used to derive implied token price at exit).</p>
-                <p class="error" id="fdvSupplyError">Enter a valid supply greater than 0.</p>
-              </div>
+        <div class="form-row">
+          <label for="monthsSinceStart">Months since vesting start</label>
+          <input id="monthsSinceStart" type="number" placeholder="e.g. 18" />
+        </div>
 
-              <div class="form-field" id="vestStartField">
-                <label class="label" for="vestStart">Vesting start date</label>
-                <input class="input" id="vestStart" name="vestStart" type="date" />
-                <p class="help">Used to estimate how many tokens are vested “today”.</p>
-                <p class="error" id="vestStartError">Enter a valid start date.</p>
-              </div>
+        <div class="form-row">
+          <label for="taxRate">Estimated tax rate (%) <span style="opacity:0.7">(optional)</span></label>
+          <input id="taxRate" type="number" placeholder="e.g. 30" />
+        </div>
+      </div>
 
-              <div class="row" style="gap: var(--space-12);">
-                <div class="form-field" id="vestMonthsField" style="flex: 1 1 220px;">
-                  <label class="label" for="vestMonths">Vesting duration (months)</label>
-                  <input class="input" id="vestMonths" name="vestMonths" inputmode="numeric" autocomplete="off" placeholder="e.g. 48" />
-                  <p class="error" id="vestMonthsError">Enter a valid duration (1+ months).</p>
-                </div>
-                <div class="form-field" id="cliffMonthsField" style="flex: 1 1 220px;">
-                  <label class="label" for="cliffMonths">Cliff (months)</label>
-                  <input class="input" id="cliffMonths" name="cliffMonths" inputmode="numeric" autocomplete="off" placeholder="e.g. 12" />
-                  <p class="error" id="cliffMonthsError">Enter a valid cliff (0–duration).</p>
-                </div>
-              </div>
+      <button id="calculateButton">Calculate</button>
+    </div>
 
-              <button class="button" id="calculate" type="button">Calculate</button>
-              <p class="text-muted text-sm">
-                This tool uses a simplified model (linear monthly vesting; flat estimated tax rate by country). For real decisions, consult a qualified tax professional.
-              </p>
-            </div>
+    <!-- RESULTS -->
+    <div class="card">
+      <div class="results-grid">
+        <div class="result-item">
+          <div class="result-label">Full grant "paper" value</div>
+          <div class="result-value" id="totalPaperValue">—</div>
+          <div class="result-sub">If everything were fully vested at today’s price.</div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">Vested tokens today</div>
+          <div class="result-value" id="vestedTokens">—</div>
+          <div class="result-sub">
+            Current vested value: <span id="worthTodayVested">—</span>
           </div>
+        </div>
 
-          <!-- Results -->
-          <div class="card-2" aria-live="polite">
-            <div class="row row-between" style="gap: var(--space-8);">
-              <h2 class="heading-md">Results</h2>
-              <div class="row" style="gap: var(--space-8);">
-                <div class="badge" id="rateBadge" style="display:none;">
-                  <span class="dot" aria-hidden="true"></span>
-                  <span><span id="countryName">—</span> tax rate: <strong id="rateValue">—</strong></span>
-                </div>
-                <div class="badge" id="exitBadge" style="display:none;">
-                  <span class="dot" aria-hidden="true"></span>
-                  <span>Implied exit token price: <strong id="exitPriceValue">—</strong></span>
-                </div>
-              </div>
-            </div>
+        <div class="result-item">
+          <div class="result-label">Monthly vesting</div>
+          <div class="result-value" id="monthlyTokens">—</div>
+          <div class="result-sub">
+            Approx. monthly value: <span id="monthlyValue">—</span>
+          </div>
+        </div>
 
-            <div class="results" id="results" aria-hidden="true" style="max-height:0px;">
-              <div class="results-grid">
-                <div class="metric">
-                  <p class="k" id="metric1Label">Vested tokens today</p>
-                  <p class="v" id="metric1Value">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k" id="metric2Label">Vested value today</p>
-                  <p class="v" id="metric2Value">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k" id="metric3Label">Total grant value today</p>
-                  <p class="v" id="metric3Value">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k" id="metric4Label">Expected total value at exit</p>
-                  <p class="v" id="metric4Value">—</p>
-                </div>
-              </div>
-
-              <div class="results-grid">
-                <div class="metric">
-                  <p class="k">Monthly vesting (tokens)</p>
-                  <p class="v" id="monthlyTokens">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k">Vesting progress</p>
-                  <p class="v" id="vestingProgress">—</p>
-                </div>
-              </div>
-
-              <div class="metric metric-spaced">
-                <p class="k">Estimated tax liabilities</p>
-                <p class="v" id="taxSummary">—</p>
-                <p class="help" id="taxHelp" style="margin-top: 6px;">
-                  Estimates shown for: taxes on vested value today, and taxes on total expected value at exit.
-                </p>
-              </div>
-            </div>
-
-            <div class="text-muted text-sm" id="resultsHint">Fill in the form to see your results.</div>
+        <div class="result-item">
+          <div class="result-label">Tax estimate</div>
+          <div class="result-value" id="monthlyTax">—</div>
+          <div class="result-sub">
+            On monthly vesting. Vested tax: <span id="taxOnVested">—</span>
           </div>
         </div>
       </div>
+
+      <p class="disclaimer">
+        This calculator is for informational purposes only and does not constitute tax, legal, or financial advice.
+      </p>
     </div>
   </div>
 
   <script>
-    /**
-     * Sample flat effective-rate config (replace with your real rules).
-     * Rates are expressed as decimals (e.g. 0.30 = 30%).
-     */
-    const TAX_CONFIG = {
-      // North America
-      US: { rate: 0.25, label: "United States", currency: "USD" },
-      CA: { rate: 0.26, label: "Canada", currency: "USD" },
-      MX: { rate: 0.30, label: "Mexico", currency: "USD" },
+    document.addEventListener("DOMContentLoaded", function () {
+      const $ = (id) => document.getElementById(id);
 
-      // South America
-      AR: { rate: 0.35, label: "Argentina", currency: "USD" },
-      BR: { rate: 0.27, label: "Brazil", currency: "USD" },
-      CL: { rate: 0.35, label: "Chile", currency: "USD" },
-      CO: { rate: 0.33, label: "Colombia", currency: "USD" },
-      PE: { rate: 0.29, label: "Peru", currency: "USD" },
-      VE: { rate: 0.34, label: "Venezuela", currency: "USD" },
-      EC: { rate: 0.35, label: "Ecuador", currency: "USD" },
-      BO: { rate: 0.25, label: "Bolivia", currency: "USD" },
-      PY: { rate: 0.10, label: "Paraguay", currency: "USD" },
-      UY: { rate: 0.25, label: "Uruguay", currency: "USD" },
+      const grantTokensInput      = $("grantTokens");
+      const currentPriceInput     = $("currentPrice");
+      const vestingYearsInput     = $("vestingYears");
+      const cliffMonthsInput      = $("cliffMonths");
+      const monthsSinceStartInput = $("monthsSinceStart");
+      const taxRateInput          = $("taxRate");
+      const button                = $("calculateButton");
 
-      // Europe - Western
-      UK: { rate: 0.20, label: "United Kingdom", currency: "USD" },
-      DE: { rate: 0.42, label: "Germany", currency: "USD" },
-      FR: { rate: 0.45, label: "France", currency: "USD" },
-      IT: { rate: 0.43, label: "Italy", currency: "USD" },
-      ES: { rate: 0.24, label: "Spain", currency: "USD" },
-      NL: { rate: 0.37, label: "Netherlands", currency: "USD" },
-      BE: { rate: 0.50, label: "Belgium", currency: "USD" },
-      AT: { rate: 0.50, label: "Austria", currency: "USD" },
-      CH: { rate: 0.21, label: "Switzerland", currency: "USD" },
-      PT: { rate: 0.28, label: "Portugal", currency: "USD" },
-      IE: { rate: 0.20, label: "Ireland", currency: "USD" },
-      LU: { rate: 0.42, label: "Luxembourg", currency: "USD" },
+      const totalPaperValueEl = $("totalPaperValue");
+      const vestedTokensEl    = $("vestedTokens");
+      const worthTodayVestedEl = $("worthTodayVested");
+      const monthlyTokensEl   = $("monthlyTokens");
+      const monthlyValueEl    = $("monthlyValue");
+      const monthlyTaxEl      = $("monthlyTax");
+      const taxOnVestedEl     = $("taxOnVested");
 
-      // Europe - Northern
-      SE: { rate: 0.52, label: "Sweden", currency: "USD" },
-      NO: { rate: 0.38, label: "Norway", currency: "USD" },
-      DK: { rate: 0.55, label: "Denmark", currency: "USD" },
-      FI: { rate: 0.51, label: "Finland", currency: "USD" },
-      IS: { rate: 0.46, label: "Iceland", currency: "USD" },
+      function toNumber(inputEl) {
+        if (!inputEl) return 0;
+        const raw = (inputEl.value || "").toString().replace(/,/g, "");
+        const val = parseFloat(raw);
+        return isNaN(val) ? 0 : val;
+      }
 
-      // Europe - Eastern
-      PL: { rate: 0.32, label: "Poland", currency: "USD" },
-      CZ: { rate: 0.23, label: "Czech Republic", currency: "USD" },
-      HU: { rate: 0.15, label: "Hungary", currency: "USD" },
-      RO: { rate: 0.10, label: "Romania", currency: "USD" },
-      BG: { rate: 0.10, label: "Bulgaria", currency: "USD" },
-      SK: { rate: 0.25, label: "Slovakia", currency: "USD" },
-      HR: { rate: 0.30, label: "Croatia", currency: "USD" },
-      SI: { rate: 0.50, label: "Slovenia", currency: "USD" },
-      LT: { rate: 0.32, label: "Lithuania", currency: "USD" },
-      LV: { rate: 0.31, label: "Latvia", currency: "USD" },
-      EE: { rate: 0.20, label: "Estonia", currency: "USD" },
-      RS: { rate: 0.20, label: "Serbia", currency: "USD" },
-      UA: { rate: 0.18, label: "Ukraine", currency: "USD" },
-
-      // Europe - Southern
-      GR: { rate: 0.44, label: "Greece", currency: "USD" },
-      CY: { rate: 0.35, label: "Cyprus", currency: "USD" },
-      MT: { rate: 0.35, label: "Malta", currency: "USD" },
-
-      // Middle East
-      AE: { rate: 0.00, label: "United Arab Emirates", currency: "USD" },
-      SA: { rate: 0.00, label: "Saudi Arabia", currency: "USD" },
-      IL: { rate: 0.50, label: "Israel", currency: "USD" },
-      TR: { rate: 0.35, label: "Turkey", currency: "USD" },
-      JO: { rate: 0.20, label: "Jordan", currency: "USD" },
-      LB: { rate: 0.15, label: "Lebanon", currency: "USD" },
-      KW: { rate: 0.00, label: "Kuwait", currency: "USD" },
-      QA: { rate: 0.00, label: "Qatar", currency: "USD" },
-      OM: { rate: 0.00, label: "Oman", currency: "USD" },
-      BH: { rate: 0.00, label: "Bahrain", currency: "USD" },
-
-      // Asia - East
-      CN: { rate: 0.35, label: "China", currency: "USD" },
-      JP: { rate: 0.45, label: "Japan", currency: "USD" },
-      KR: { rate: 0.38, label: "South Korea", currency: "USD" },
-      TW: { rate: 0.40, label: "Taiwan", currency: "USD" },
-      HK: { rate: 0.15, label: "Hong Kong", currency: "USD" },
-      MO: { rate: 0.12, label: "Macau", currency: "USD" },
-
-      // Asia - Southeast
-      SG: { rate: 0.17, label: "Singapore", currency: "USD" },
-      MY: { rate: 0.28, label: "Malaysia", currency: "USD" },
-      TH: { rate: 0.35, label: "Thailand", currency: "USD" },
-      ID: { rate: 0.30, label: "Indonesia", currency: "USD" },
-      PH: { rate: 0.32, label: "Philippines", currency: "USD" },
-      VN: { rate: 0.35, label: "Vietnam", currency: "USD" },
-      MM: { rate: 0.25, label: "Myanmar", currency: "USD" },
-      KH: { rate: 0.20, label: "Cambodia", currency: "USD" },
-      LA: { rate: 0.24, label: "Laos", currency: "USD" },
-      BN: { rate: 0.00, label: "Brunei", currency: "USD" },
-
-      // Asia - South
-      IN: { rate: 0.30, label: "India", currency: "USD" },
-      PK: { rate: 0.29, label: "Pakistan", currency: "USD" },
-      BD: { rate: 0.30, label: "Bangladesh", currency: "USD" },
-      LK: { rate: 0.24, label: "Sri Lanka", currency: "USD" },
-      NP: { rate: 0.30, label: "Nepal", currency: "USD" },
-
-      // Oceania
-      AU: { rate: 0.30, label: "Australia", currency: "USD" },
-      NZ: { rate: 0.33, label: "New Zealand", currency: "USD" },
-      FJ: { rate: 0.20, label: "Fiji", currency: "USD" },
-      PG: { rate: 0.30, label: "Papua New Guinea", currency: "USD" },
-
-      // Africa - North
-      EG: { rate: 0.25, label: "Egypt", currency: "USD" },
-      DZ: { rate: 0.35, label: "Algeria", currency: "USD" },
-      MA: { rate: 0.38, label: "Morocco", currency: "USD" },
-      TN: { rate: 0.35, label: "Tunisia", currency: "USD" },
-      LY: { rate: 0.10, label: "Libya", currency: "USD" },
-
-      // Africa - West
-      NG: { rate: 0.24, label: "Nigeria", currency: "USD" },
-      GH: { rate: 0.25, label: "Ghana", currency: "USD" },
-      CI: { rate: 0.25, label: "Côte d'Ivoire", currency: "USD" },
-      SN: { rate: 0.40, label: "Senegal", currency: "USD" },
-
-      // Africa - East
-      KE: { rate: 0.30, label: "Kenya", currency: "USD" },
-      TZ: { rate: 0.30, label: "Tanzania", currency: "USD" },
-      UG: { rate: 0.30, label: "Uganda", currency: "USD" },
-      ET: { rate: 0.35, label: "Ethiopia", currency: "USD" },
-      RW: { rate: 0.30, label: "Rwanda", currency: "USD" },
-
-      // Africa - South
-      ZA: { rate: 0.45, label: "South Africa", currency: "USD" },
-      ZW: { rate: 0.25, label: "Zimbabwe", currency: "USD" },
-      BW: { rate: 0.25, label: "Botswana", currency: "USD" },
-      NA: { rate: 0.37, label: "Namibia", currency: "USD" },
-      MU: { rate: 0.15, label: "Mauritius", currency: "USD" },
-
-      // Caribbean
-      JM: { rate: 0.25, label: "Jamaica", currency: "USD" },
-      TT: { rate: 0.30, label: "Trinidad and Tobago", currency: "USD" },
-      BB: { rate: 0.25, label: "Barbados", currency: "USD" },
-      BS: { rate: 0.00, label: "Bahamas", currency: "USD" },
-
-      // Central America
-      CR: { rate: 0.30, label: "Costa Rica", currency: "USD" },
-      PA: { rate: 0.25, label: "Panama", currency: "USD" },
-      GT: { rate: 0.25, label: "Guatemala", currency: "USD" },
-      SV: { rate: 0.30, label: "El Salvador", currency: "USD" },
-      HN: { rate: 0.25, label: "Honduras", currency: "USD" },
-      NI: { rate: 0.30, label: "Nicaragua", currency: "USD" },
-
-      // Central Asia
-      KZ: { rate: 0.10, label: "Kazakhstan", currency: "USD" },
-      UZ: { rate: 0.12, label: "Uzbekistan", currency: "USD" },
-
-      // Other
-      RU: { rate: 0.13, label: "Russia", currency: "USD" },
-      BY: { rate: 0.13, label: "Belarus", currency: "USD" },
-    };
-
-    const els = {
-      country: document.getElementById("country"),
-      grantTokens: document.getElementById("grantTokens"),
-      currentPrice: document.getElementById("currentPrice"),
-      expectedValuation: document.getElementById("expectedValuation"),
-      fdvSupply: document.getElementById("fdvSupply"),
-      vestStart: document.getElementById("vestStart"),
-      vestMonths: document.getElementById("vestMonths"),
-      cliffMonths: document.getElementById("cliffMonths"),
-      calculate: document.getElementById("calculate"),
-
-      viewTotal: document.getElementById("viewTotal"),
-      viewMonthly: document.getElementById("viewMonthly"),
-
-      countryField: document.getElementById("countryField"),
-      grantField: document.getElementById("grantField"),
-      currentPriceField: document.getElementById("currentPriceField"),
-      expectedValuationField: document.getElementById("expectedValuationField"),
-      fdvSupplyField: document.getElementById("fdvSupplyField"),
-      vestStartField: document.getElementById("vestStartField"),
-      vestMonthsField: document.getElementById("vestMonthsField"),
-      cliffMonthsField: document.getElementById("cliffMonthsField"),
-
-      results: document.getElementById("results"),
-      resultsHint: document.getElementById("resultsHint"),
-      rateBadge: document.getElementById("rateBadge"),
-      exitBadge: document.getElementById("exitBadge"),
-      countryName: document.getElementById("countryName"),
-      rateValue: document.getElementById("rateValue"),
-      exitPriceValue: document.getElementById("exitPriceValue"),
-
-      metric1Label: document.getElementById("metric1Label"),
-      metric2Label: document.getElementById("metric2Label"),
-      metric3Label: document.getElementById("metric3Label"),
-      metric4Label: document.getElementById("metric4Label"),
-      metric1Value: document.getElementById("metric1Value"),
-      metric2Value: document.getElementById("metric2Value"),
-      metric3Value: document.getElementById("metric3Value"),
-      metric4Value: document.getElementById("metric4Value"),
-
-      monthlyTokens: document.getElementById("monthlyTokens"),
-      vestingProgress: document.getElementById("vestingProgress"),
-
-      taxSummary: document.getElementById("taxSummary"),
-    };
-
-    let resultsView = "total"; // "total" | "monthly"
-    let hasCalculated = false;
-
-    let heightPostRaf = 0;
-    function notifyParentHeight() {
-      try {
-        if (!window.parent || window.parent === window) return;
-        if (heightPostRaf) cancelAnimationFrame(heightPostRaf);
-        heightPostRaf = requestAnimationFrame(() => {
-          const body = document.body;
-          const html = document.documentElement;
-          const bodyRectH = body?.getBoundingClientRect?.().height ?? 0;
-          const htmlRectH = html?.getBoundingClientRect?.().height ?? 0;
-          const height = Math.ceil(Math.max(
-            body?.offsetHeight ?? 0,
-            html?.offsetHeight ?? 0,
-            bodyRectH,
-            htmlRectH,
-          ));
-          window.parent.postMessage({ type: "token-grant-calculator:height", height }, "*");
-          heightPostRaf = 0;
+      function formatUSD(num) {
+        return num.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 2
         });
-      } catch {
-        // ignore
-      }
-    }
-
-    function formatMoney(value, currency) {
-      try {
-        return new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency,
-          maximumFractionDigits: 0,
-        }).format(value);
-      } catch {
-        return `${currency} ${Math.round(value).toLocaleString()}`;
-      }
-    }
-
-    function formatMoneySmall(value, currency) {
-      try {
-        return new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency,
-          maximumFractionDigits: 2,
-        }).format(value);
-      } catch {
-        return `${currency} ${Number(value).toFixed(2)}`;
-      }
-    }
-
-    function formatNumber(value, { maximumFractionDigits = 2 } = {}) {
-      if (!Number.isFinite(value)) return "—";
-      return new Intl.NumberFormat(undefined, { maximumFractionDigits }).format(value);
-    }
-
-    function parseNumber(raw) {
-      const cleaned = String(raw ?? "").trim().replace(/[, ]+/g, "");
-      if (!cleaned) return NaN;
-      const n = Number(cleaned);
-      return Number.isFinite(n) ? n : NaN;
-    }
-
-    function parseIntSafe(raw) {
-      const n = parseNumber(raw);
-      if (!Number.isFinite(n)) return NaN;
-      return Math.trunc(n);
-    }
-
-    function parseDateYYYYMMDD(raw) {
-      const s = String(raw ?? "").trim();
-      if (!s) return null;
-      // Input type="date" yields YYYY-MM-DD in modern browsers
-      const d = new Date(`${s}T00:00:00`);
-      return Number.isFinite(d.getTime()) ? d : null;
-    }
-
-    function monthsBetween(startDate, endDate) {
-      // Whole months elapsed, clamped at >= 0
-      if (!(startDate instanceof Date) || !(endDate instanceof Date)) return 0;
-      if (!Number.isFinite(startDate.getTime()) || !Number.isFinite(endDate.getTime())) return 0;
-      if (endDate < startDate) return 0;
-
-      const sy = startDate.getFullYear();
-      const sm = startDate.getMonth();
-      const sd = startDate.getDate();
-      const ey = endDate.getFullYear();
-      const em = endDate.getMonth();
-      const ed = endDate.getDate();
-
-      let months = (ey - sy) * 12 + (em - sm);
-      // If we haven't reached the start-day in the current month, subtract one month
-      if (ed < sd) months -= 1;
-      return Math.max(0, months);
-    }
-
-    function setView(next) {
-      resultsView = next;
-      const isMonthly = resultsView === "monthly";
-      els.viewMonthly.setAttribute("aria-pressed", String(isMonthly));
-      els.viewTotal.setAttribute("aria-pressed", String(!isMonthly));
-
-      const v = validate({ showErrors: false });
-      if (hasCalculated && v.allValid) {
-        calculate(v);
-        showResults();
-        return;
-      }
-      validateAndMaybeCalculate({ shouldCalculate: false });
-    }
-
-    function isClearedToDefault() {
-      const allEmpty = [
-        els.country.value,
-        els.grantTokens.value,
-        els.currentPrice.value,
-        els.expectedValuation.value,
-        els.fdvSupply.value,
-        els.vestStart.value,
-        els.vestMonths.value,
-        els.cliffMonths.value,
-      ].every((v) => !String(v || "").trim());
-      return allEmpty;
-    }
-
-    function showResults() {
-      els.results.setAttribute("aria-hidden", "false");
-      els.resultsHint.style.display = "none";
-      els.results.classList.add("is-visible");
-      requestAnimationFrame(() => {
-        els.results.style.maxHeight = `${els.results.scrollHeight}px`;
-        notifyParentHeight();
-      });
-    }
-
-    function hideResults() {
-      hasCalculated = false;
-      const currentHeight = els.results.scrollHeight;
-      els.results.style.maxHeight = `${currentHeight}px`;
-      void els.results.offsetHeight;
-      els.results.classList.remove("is-visible");
-      els.results.style.maxHeight = "0px";
-      els.results.setAttribute("aria-hidden", "true");
-      els.rateBadge.style.display = "none";
-      els.exitBadge.style.display = "none";
-      els.resultsHint.style.display = "";
-      notifyParentHeight();
-    }
-
-    function setFieldValidity(fieldEl, isValid, { showErrors }) {
-      fieldEl.classList.toggle("field-invalid", Boolean(showErrors && !isValid));
-    }
-
-    function validate({ showErrors }) {
-      const countryCode = els.country.value;
-      const cfg = TAX_CONFIG[countryCode];
-      const tokens = parseNumber(els.grantTokens.value);
-      const currentPrice = parseNumber(els.currentPrice.value);
-      const expectedValuation = parseNumber(els.expectedValuation.value);
-      const fdvSupply = parseNumber(els.fdvSupply.value);
-      const vestStart = parseDateYYYYMMDD(els.vestStart.value);
-      const vestMonths = parseIntSafe(els.vestMonths.value);
-      const cliffMonths = parseIntSafe(els.cliffMonths.value);
-
-      const countryValid = Boolean(countryCode && cfg);
-      const tokensValid = Number.isFinite(tokens) && tokens > 0;
-      const currentPriceValid = Number.isFinite(currentPrice) && currentPrice >= 0;
-      const expectedValuationValid = Number.isFinite(expectedValuation) && expectedValuation > 0;
-      const fdvSupplyValid = Number.isFinite(fdvSupply) && fdvSupply > 0;
-      const vestStartValid = Boolean(vestStart);
-      const vestMonthsValid = Number.isFinite(vestMonths) && vestMonths >= 1;
-      const cliffMonthsValid = Number.isFinite(cliffMonths) && cliffMonths >= 0 && vestMonthsValid && cliffMonths <= vestMonths;
-
-      setFieldValidity(els.countryField, countryValid, { showErrors });
-      setFieldValidity(els.grantField, tokensValid, { showErrors });
-      setFieldValidity(els.currentPriceField, currentPriceValid, { showErrors });
-      setFieldValidity(els.expectedValuationField, expectedValuationValid, { showErrors });
-      setFieldValidity(els.fdvSupplyField, fdvSupplyValid, { showErrors });
-      setFieldValidity(els.vestStartField, vestStartValid, { showErrors });
-      setFieldValidity(els.vestMonthsField, vestMonthsValid, { showErrors });
-      setFieldValidity(els.cliffMonthsField, cliffMonthsValid, { showErrors });
-
-      const allValid = [
-        countryValid,
-        tokensValid,
-        currentPriceValid,
-        expectedValuationValid,
-        fdvSupplyValid,
-        vestStartValid,
-        vestMonthsValid,
-        cliffMonthsValid,
-      ].every(Boolean);
-
-      return {
-        allValid,
-        countryCode,
-        tokens,
-        currentPrice,
-        expectedValuation,
-        fdvSupply,
-        vestStart,
-        vestMonths,
-        cliffMonths,
-      };
-    }
-
-    function calculate(v) {
-      const cfg = TAX_CONFIG[v.countryCode];
-      const currency = cfg.currency || "USD";
-      const taxRate = cfg.rate || 0;
-
-      const impliedExitPrice = v.expectedValuation / v.fdvSupply;
-      const tokensPerMonth = v.tokens / v.vestMonths;
-
-      const now = new Date();
-      const elapsedMonths = monthsBetween(v.vestStart, now);
-      const vestedMonths = elapsedMonths < v.cliffMonths ? 0 : Math.min(elapsedMonths, v.vestMonths);
-      const vestedTokens = tokensPerMonth * vestedMonths;
-
-      const totalValueToday = v.tokens * v.currentPrice;
-      const vestedValueToday = vestedTokens * v.currentPrice;
-      const totalValueAtExit = v.tokens * impliedExitPrice;
-
-      const monthlyValueToday = tokensPerMonth * v.currentPrice;
-      const monthlyValueAtExit = tokensPerMonth * impliedExitPrice;
-
-      const taxOnVestedToday = vestedValueToday * taxRate;
-      const taxOnTotalAtExit = totalValueAtExit * taxRate;
-      const monthlyTaxToday = monthlyValueToday * taxRate;
-      const monthlyTaxAtExit = monthlyValueAtExit * taxRate;
-
-      const pctVested = v.tokens > 0 ? (vestedTokens / v.tokens) : 0;
-
-      els.countryName.textContent = cfg.label;
-      els.rateValue.textContent = `${Math.round(taxRate * 1000) / 10}%`;
-      els.rateBadge.style.display = "";
-
-      els.exitPriceValue.textContent = formatMoneySmall(impliedExitPrice, currency);
-      els.exitBadge.style.display = "";
-
-      // Main grid depends on view toggle
-      if (resultsView === "monthly") {
-        els.metric1Label.textContent = "Monthly vesting value (today)";
-        els.metric2Label.textContent = "Monthly tax (today)";
-        els.metric3Label.textContent = "Monthly vesting value (at exit)";
-        els.metric4Label.textContent = "Monthly tax (at exit)";
-
-        els.metric1Value.textContent = formatMoney(monthlyValueToday, currency);
-        els.metric2Value.textContent = formatMoney(monthlyTaxToday, currency);
-        els.metric3Value.textContent = formatMoney(monthlyValueAtExit, currency);
-        els.metric4Value.textContent = formatMoney(monthlyTaxAtExit, currency);
-      } else {
-        els.metric1Label.textContent = "Vested tokens today";
-        els.metric2Label.textContent = "Vested value today";
-        els.metric3Label.textContent = "Total grant value today";
-        els.metric4Label.textContent = "Expected total value at exit";
-
-        els.metric1Value.textContent = `${formatNumber(vestedTokens, { maximumFractionDigits: 2 })}`;
-        els.metric2Value.textContent = formatMoney(vestedValueToday, currency);
-        els.metric3Value.textContent = formatMoney(totalValueToday, currency);
-        els.metric4Value.textContent = formatMoney(totalValueAtExit, currency);
       }
 
-      els.monthlyTokens.textContent = `${formatNumber(tokensPerMonth, { maximumFractionDigits: 2 })} / mo`;
-      els.vestingProgress.textContent = `${Math.round(pctVested * 1000) / 10}% vested (${vestedMonths}/${v.vestMonths} months)`;
-
-      els.taxSummary.textContent =
-        `${formatMoney(taxOnVestedToday, currency)} (tax on vested value today) · ` +
-        `${formatMoney(taxOnTotalAtExit, currency)} (tax on total value at exit)`;
-    }
-
-    function validateAndMaybeCalculate({ shouldCalculate }) {
-      if (isClearedToDefault()) {
-        hideResults();
-        validate({ showErrors: shouldCalculate });
-        return;
+      function formatNumber(num) {
+        return num.toLocaleString("en-US", {
+          maximumFractionDigits: 4
+        });
       }
 
-      const v = validate({ showErrors: shouldCalculate });
-      if (!v.allValid) {
-        if (!hasCalculated) hideResults();
-        return;
-      }
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
 
-      if (shouldCalculate) {
-        hasCalculated = true;
-        calculate(v);
-        showResults();
-      }
-    }
+        const grantTokens      = toNumber(grantTokensInput);
+        const currentPrice     = toNumber(currentPriceInput);
+        const vestingYears     = toNumber(vestingYearsInput);
+        const cliffMonths      = toNumber(cliffMonthsInput);
+        const monthsSinceStart = toNumber(monthsSinceStartInput);
+        const taxRatePercent   = toNumber(taxRateInput);
 
-    function populateCountries() {
-      const entries = Object.entries(TAX_CONFIG)
-        .sort((a, b) => a[1].label.localeCompare(b[1].label));
-
-      for (const [code, info] of entries) {
-        const opt = document.createElement("option");
-        opt.value = code;
-        opt.textContent = info.label;
-        els.country.appendChild(opt);
-      }
-    }
-
-    // Wire up
-    populateCountries();
-    setView("total");
-    notifyParentHeight();
-
-    try {
-      const ro = new ResizeObserver(() => notifyParentHeight());
-      ro.observe(document.documentElement);
-      ro.observe(document.body);
-    } catch {
-      // ignore
-    }
-
-    els.viewTotal.addEventListener("click", () => setView("total"));
-    els.viewMonthly.addEventListener("click", () => setView("monthly"));
-
-    const liveUpdate = () => {
-      if (hasCalculated) {
-        if (isClearedToDefault()) {
-          hideResults();
-          validate({ showErrors: false });
+        if (!grantTokens || !currentPrice || !vestingYears) {
+          alert("Please fill in at least: total token grant, current price, and vesting length.");
           return;
         }
-        const v = validate({ showErrors: false });
-        if (v.allValid) {
-          calculate(v);
-          showResults();
+
+        const totalVestingMonths = vestingYears * 12;
+
+        // 1) Full paper value (as if fully vested)
+        const totalPaperValue = grantTokens * currentPrice;
+
+        // 2) Vested tokens today (cliff + linear)
+        let vestedMonths = 0;
+        if (monthsSinceStart >= cliffMonths) {
+          vestedMonths = Math.min(monthsSinceStart, totalVestingMonths);
         }
-        return;
-      }
-      validateAndMaybeCalculate({ shouldCalculate: false });
-    };
 
-    els.country.addEventListener("change", liveUpdate);
-    els.grantTokens.addEventListener("input", liveUpdate);
-    els.currentPrice.addEventListener("input", liveUpdate);
-    els.expectedValuation.addEventListener("input", liveUpdate);
-    els.fdvSupply.addEventListener("input", liveUpdate);
-    els.vestStart.addEventListener("change", liveUpdate);
-    els.vestMonths.addEventListener("input", liveUpdate);
-    els.cliffMonths.addEventListener("input", liveUpdate);
+        const vestedTokens = totalVestingMonths > 0
+          ? grantTokens * (vestedMonths / totalVestingMonths)
+          : 0;
 
-    els.calculate.addEventListener("click", () => {
-      validateAndMaybeCalculate({ shouldCalculate: true });
-    });
+        const worthTodayVested = vestedTokens * currentPrice;
 
-    // Press Enter to calculate from any input
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        const t = e.target;
-        if (t && (t.tagName === "INPUT" || t.tagName === "SELECT")) {
-          e.preventDefault();
-          validateAndMaybeCalculate({ shouldCalculate: true });
-        }
-      }
-    });
+        // 3) Monthly vesting
+        const monthlyTokens = totalVestingMonths > 0
+          ? grantTokens / totalVestingMonths
+          : 0;
 
-    window.addEventListener("resize", () => {
-      if (els.results.classList.contains("is-visible")) {
-        els.results.style.maxHeight = `${els.results.scrollHeight}px`;
-      }
-      notifyParentHeight();
-    });
+        const monthlyValue = monthlyTokens * currentPrice;
 
-    els.results.addEventListener("transitionend", (e) => {
-      if (e.propertyName !== "max-height") return;
-      if (els.results.classList.contains("is-visible")) {
-        els.results.style.maxHeight = "none";
-      }
-      notifyParentHeight();
+        // 4) Tax estimates (if taxRate provided)
+        const taxRate = (taxRatePercent || 0) / 100;
+        const monthlyTax = monthlyValue * taxRate;
+        const taxOnVested = worthTodayVested * taxRate;
+
+        // Update UI
+        totalPaperValueEl.textContent   = formatUSD(totalPaperValue);
+        vestedTokensEl.textContent      = formatNumber(vestedTokens);
+        worthTodayVestedEl.textContent  = formatUSD(worthTodayVested);
+        monthlyTokensEl.textContent     = formatNumber(monthlyTokens);
+        monthlyValueEl.textContent      = formatUSD(monthlyValue);
+        monthlyTaxEl.textContent        = taxRatePercent ? formatUSD(monthlyTax) : "—";
+        taxOnVestedEl.textContent       = taxRatePercent ? formatUSD(taxOnVested) : "—";
+      });
     });
   </script>
-
 </body>
 </html>
-
