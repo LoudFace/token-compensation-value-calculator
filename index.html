@@ -144,8 +144,8 @@
     .metric .v { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
   </style>
 </head>
-<body>
-  <div class="page-wrapper">
+<body id="token-calculator-iframe">
+  <div class="page-wrapper" id="token-calculator-wrap">
     <div class="container section">
       <div class="stack stack-lg">
         <div class="card" aria-live="polite">
@@ -542,6 +542,36 @@
         els.results.style.maxHeight = "none";
       }
     });
+  </script>
+  <script>
+    (function () {
+      const TYPE = "token-calculator:height";
+
+      function sendHeight() {
+        const height = Math.max(
+          document.documentElement.scrollHeight,
+          document.body.scrollHeight
+        );
+        window.parent.postMessage({ type: TYPE, height }, "*");
+      }
+
+      window.addEventListener("load", sendHeight);
+      window.addEventListener("resize", sendHeight);
+
+      if ("ResizeObserver" in window) {
+        const ro = new ResizeObserver(sendHeight);
+        ro.observe(document.documentElement);
+        if (document.body) ro.observe(document.body);
+      }
+
+      document.addEventListener("transitionend", sendHeight, true);
+      document.addEventListener("input", sendHeight, true);
+      document.addEventListener("click", sendHeight, true);
+
+      setTimeout(sendHeight, 100);
+      setTimeout(sendHeight, 400);
+      setTimeout(sendHeight, 900);
+    })();
   </script>
 </body>
 </html>
