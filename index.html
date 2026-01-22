@@ -144,8 +144,8 @@
     .metric .v { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
   </style>
 </head>
-<body id="token-calculator-iframe">
-  <div class="page-wrapper" id="token-calculator-wrap">
+<body>
+  <div class="page-wrapper">
     <div class="container section">
       <div class="stack stack-lg">
         <div class="card" aria-live="polite">
@@ -548,10 +548,19 @@
       const TYPE = "token-calculator:height";
 
       function sendHeight() {
-        const height = Math.max(
-          document.documentElement.scrollHeight,
-          document.body.scrollHeight
-        );
+        const body = document.body;
+        const html = document.documentElement;
+
+        const bodyRectH = body?.getBoundingClientRect?.().height ?? 0;
+        const htmlRectH = html?.getBoundingClientRect?.().height ?? 0;
+
+        const height = Math.ceil(Math.max(
+          body?.offsetHeight ?? 0,
+          html?.offsetHeight ?? 0,
+          bodyRectH,
+          htmlRectH
+        ));
+
         window.parent.postMessage({ type: TYPE, height }, "*");
       }
 
