@@ -43,17 +43,30 @@
       background: var(--background);
     }
 
+    /* Webflow-style layout primitives (kept small on purpose) */
     .page-wrapper { min-height: 100%; padding: 1rem; }
     .container { max-width: 1040px; margin: 0 auto; }
     .section { padding: 0; }
 
-    .card {
+    .grid-2col {
+      display: grid;
+      /* One column on all devices (consistent behavior) */
+      grid-template-columns: 1fr;
+      gap: var(--space-20);
+      align-items: start;
+    }
+
+    @media (max-width: 991px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+
+    .card, .card-2 {
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       padding: var(--space-24);
       box-shadow: var(--shadow-card);
       background: #fff;
-      max-width: 44rem;
+      max-width: 40rem;
       width: 100%;
       margin: 0 auto;
     }
@@ -63,6 +76,7 @@
     .row { display: flex; gap: var(--space-12); align-items: center; flex-wrap: wrap; }
     .row-between { justify-content: space-between; }
 
+    .heading-xl { font-size: 28px; line-height: 1.2; margin: 0; letter-spacing: -0.02em; }
     .heading-md { font-size: 18px; line-height: 1.3; margin: 0; letter-spacing: -0.01em; }
     .text-muted { color: var(--text-secondary); margin: 0; }
     .text-sm { font-size: 13px; line-height: 1.5; }
@@ -70,7 +84,7 @@
     .form-field { display: grid; gap: var(--space-8); }
     .label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
 
-    .input {
+    .input, .select {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: var(--radius-control);
@@ -83,13 +97,43 @@
       transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
     }
 
-    .input:focus { box-shadow: var(--focus); border-color: rgba(22, 70, 206, 0.35); }
+    .input:focus, .select:focus { box-shadow: var(--focus); border-color: rgba(22, 70, 206, 0.35); }
 
-    .help, .error { font-size: 13px; margin: 0; }
+    .help, .error {
+      font-size: 13px;
+      margin: 0;
+    }
+
     .help { color: var(--text-secondary); }
     .error { color: var(--danger); display: none; }
-    .field-invalid .input { border-color: rgba(217, 45, 32, 0.45); }
+    .field-invalid .input, .field-invalid .select { border-color: rgba(217, 45, 32, 0.45); }
     .field-invalid .error { display: block; }
+
+    .segmented {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px;
+      background: rgba(17, 24, 39, 0.03);
+      gap: 4px;
+    }
+
+    .segmented-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .segmented-button[aria-pressed="true"] {
+      background: #fff;
+      color: var(--text-primary);
+      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
+    }
 
     .button {
       width: 100%;
@@ -140,78 +184,109 @@
       background: rgba(17, 24, 39, 0.02);
     }
 
+    .metric-spaced { margin-top: var(--space-12); }
+
     .metric .k { font-size: 13px; color: var(--text-secondary); margin: 0 0 6px; }
     .metric .v { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.02);
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--success);
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
   <div class="page-wrapper">
     <div class="container section">
       <div class="stack stack-lg">
-        <div class="card" aria-live="polite">
-          <div class="stack">
+        <div class="grid-2col">
+          <div class="card">
+            <div class="stack">
+              <div class="row row-between">
+                <h2 class="heading-md">Token grant calculator</h2>
+                <p class="text-muted text-sm">Estimates only.</p>
+              </div>
+
+              <!-- Inputs (functionality based on your "Simple Token Grant Calculator") -->
+              <div class="form-field" id="grantTokensField">
+                <label class="label" for="grantTokens">Total token grant</label>
+                <input class="input" id="grantTokens" inputmode="decimal" autocomplete="off" placeholder="e.g. 50000" />
+                <p class="error">Enter a valid token amount greater than 0.</p>
+              </div>
+
+              <div class="form-field" id="currentPriceField">
+                <label class="label" for="currentPrice">Current token price (USD)</label>
+                <input class="input" id="currentPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 0.25" />
+                <p class="error">Enter a valid price (0 or greater).</p>
+              </div>
+
+              <div class="form-field" id="vestingYearsField">
+                <label class="label" for="vestingYears">Vesting length (years)</label>
+                <input class="input" id="vestingYears" inputmode="decimal" autocomplete="off" placeholder="e.g. 4" />
+                <p class="error">Enter a valid vesting length greater than 0.</p>
+              </div>
+
+              <div class="row" style="gap: var(--space-12);">
+                <div class="form-field" id="cliffMonthsField" style="flex: 1 1 220px;">
+                  <label class="label" for="cliffMonths">Cliff (months)</label>
+                  <input class="input" id="cliffMonths" inputmode="numeric" autocomplete="off" placeholder="e.g. 12" />
+                  <p class="error">Enter a valid cliff (0–total vesting months).</p>
+                </div>
+
+                <div class="form-field" id="monthsSinceStartField" style="flex: 1 1 220px;">
+                  <label class="label" for="monthsSinceStart">Months since vesting start</label>
+                  <input class="input" id="monthsSinceStart" inputmode="numeric" autocomplete="off" placeholder="e.g. 18" />
+                  <p class="error">Enter months since start (0+).</p>
+                </div>
+              </div>
+
+              <div class="form-field" id="taxRateField">
+                <label class="label" for="taxRate">Estimated tax rate (%) <span class="text-muted">(optional)</span></label>
+                <input class="input" id="taxRate" inputmode="decimal" autocomplete="off" placeholder="e.g. 30" />
+                <p class="help">If omitted, tax liabilities will show “—”.</p>
+                <p class="error">Enter a valid tax rate (0–100).</p>
+              </div>
+
+              <!-- Added to support: Token grant → expected valuation -->
+              <div class="form-field" id="expectedValuationField">
+                <label class="label" for="expectedValuation">Expected valuation at exit (USD)</label>
+                <input class="input" id="expectedValuation" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
+                <p class="error">Enter a valid valuation greater than 0.</p>
+              </div>
+
+              <div class="form-field" id="fdvSupplyField">
+                <label class="label" for="fdvSupply">Fully diluted token supply</label>
+                <input class="input" id="fdvSupply" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
+                <p class="error">Enter a valid supply greater than 0.</p>
+              </div>
+
+              <button class="button" id="calculate" type="button">Calculate</button>
+            </div>
+          </div>
+
+          <div class="card-2" aria-live="polite">
             <div class="row row-between">
-              <h2 class="heading-md">Token grant calculator</h2>
-              <p class="text-muted text-sm">Estimates only.</p>
+              <h2 class="heading-md">Results</h2>
             </div>
-
-            <!-- Inputs (functionality based on your "Simple Token Grant Calculator") -->
-            <div class="form-field" id="grantTokensField">
-              <label class="label" for="grantTokens">Total token grant</label>
-              <input class="input" id="grantTokens" inputmode="decimal" autocomplete="off" placeholder="e.g. 50000" />
-              <p class="error">Enter a valid token amount greater than 0.</p>
-            </div>
-
-            <div class="form-field" id="currentPriceField">
-              <label class="label" for="currentPrice">Current token price (USD)</label>
-              <input class="input" id="currentPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 0.25" />
-              <p class="error">Enter a valid price (0 or greater).</p>
-            </div>
-
-            <div class="form-field" id="vestingYearsField">
-              <label class="label" for="vestingYears">Vesting length (years)</label>
-              <input class="input" id="vestingYears" inputmode="decimal" autocomplete="off" placeholder="e.g. 4" />
-              <p class="error">Enter a valid vesting length greater than 0.</p>
-            </div>
-
-            <div class="row" style="gap: var(--space-12);">
-              <div class="form-field" id="cliffMonthsField" style="flex: 1 1 220px;">
-                <label class="label" for="cliffMonths">Cliff (months)</label>
-                <input class="input" id="cliffMonths" inputmode="numeric" autocomplete="off" placeholder="e.g. 12" />
-                <p class="error">Enter a valid cliff (0–total vesting months).</p>
-              </div>
-
-              <div class="form-field" id="monthsSinceStartField" style="flex: 1 1 220px;">
-                <label class="label" for="monthsSinceStart">Months since vesting start</label>
-                <input class="input" id="monthsSinceStart" inputmode="numeric" autocomplete="off" placeholder="e.g. 18" />
-                <p class="error">Enter months since start (0+).</p>
-              </div>
-            </div>
-
-            <div class="form-field" id="taxRateField">
-              <label class="label" for="taxRate">Estimated tax rate (%) <span class="text-muted">(optional)</span></label>
-              <input class="input" id="taxRate" inputmode="decimal" autocomplete="off" placeholder="e.g. 30" />
-              <p class="help">If omitted, tax liabilities will show “—”.</p>
-              <p class="error">Enter a valid tax rate (0–100).</p>
-            </div>
-
-            <!-- Added to support: Token grant → expected valuation -->
-            <div class="form-field" id="expectedValuationField">
-              <label class="label" for="expectedValuation">Expected valuation at exit (USD)</label>
-              <input class="input" id="expectedValuation" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-              <p class="error">Enter a valid valuation greater than 0.</p>
-            </div>
-
-            <div class="form-field" id="fdvSupplyField">
-              <label class="label" for="fdvSupply">Fully diluted token supply</label>
-              <input class="input" id="fdvSupply" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-              <p class="error">Enter a valid supply greater than 0.</p>
-            </div>
-
-            <button class="button" id="calculate" type="button">Calculate</button>
 
             <!-- Results (only what’s required) -->
-            <div class="results" id="results" aria-hidden="true">
+            <div class="results" id="results" aria-hidden="true" style="max-height:0px;">
               <!-- Token grant → expected valuation -->
               <div class="results-grid">
                 <div class="metric">
