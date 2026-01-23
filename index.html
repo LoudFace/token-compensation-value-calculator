@@ -240,40 +240,6 @@
                 <p class="error">Enter a valid vesting length greater than 0.</p>
               </div>
 
-              <div class="row" style="gap: var(--space-12);">
-                <div class="form-field" id="cliffMonthsField" style="flex: 1 1 220px;">
-                  <label class="label" for="cliffMonths">Cliff (months)</label>
-                  <input class="input" id="cliffMonths" inputmode="numeric" autocomplete="off" placeholder="e.g. 12" />
-                  <p class="error">Enter a valid cliff (0–total vesting months).</p>
-                </div>
-
-                <div class="form-field" id="monthsSinceStartField" style="flex: 1 1 220px;">
-                  <label class="label" for="monthsSinceStart">Months since vesting start</label>
-                  <input class="input" id="monthsSinceStart" inputmode="numeric" autocomplete="off" placeholder="e.g. 18" />
-                  <p class="error">Enter months since start (0+).</p>
-                </div>
-              </div>
-
-              <div class="form-field" id="taxRateField">
-                <label class="label" for="taxRate">Estimated tax rate (%) <span class="text-muted">(optional)</span></label>
-                <input class="input" id="taxRate" inputmode="decimal" autocomplete="off" placeholder="e.g. 30" />
-                <p class="help">If omitted, tax liabilities will show “—”.</p>
-                <p class="error">Enter a valid tax rate (0–100).</p>
-              </div>
-
-              <!-- Added to support: Token grant → expected valuation -->
-              <div class="form-field" id="expectedValuationField">
-                <label class="label" for="expectedValuation">Expected valuation at exit (USD)</label>
-                <input class="input" id="expectedValuation" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-                <p class="error">Enter a valid valuation greater than 0.</p>
-              </div>
-
-              <div class="form-field" id="fdvSupplyField">
-                <label class="label" for="fdvSupply">Fully diluted token supply</label>
-                <input class="input" id="fdvSupply" inputmode="decimal" autocomplete="off" placeholder="e.g. 1000000000" />
-                <p class="error">Enter a valid supply greater than 0.</p>
-              </div>
-
               <button class="button" id="calculate" type="button">Calculate</button>
             </div>
           </div>
@@ -285,20 +251,11 @@
 
             <!-- Results (only what’s required) -->
             <div class="results" id="results" aria-hidden="true" style="max-height:0px;">
-              <!-- Token grant → expected valuation -->
               <div class="results-grid">
                 <div class="metric">
-                  <p class="k">Implied exit token price</p>
-                  <p class="v" id="impliedExitPrice">—</p>
+                  <p class="k">Total grant value today</p>
+                  <p class="v" id="totalPaperValue">—</p>
                 </div>
-                <div class="metric">
-                  <p class="k">Expected grant value at exit</p>
-                  <p class="v" id="expectedExitValue">—</p>
-                </div>
-              </div>
-
-              <!-- Vesting schedule → monthly value -->
-              <div class="results-grid">
                 <div class="metric">
                   <p class="k">Monthly vesting (tokens)</p>
                   <p class="v" id="monthlyTokens">—</p>
@@ -306,30 +263,6 @@
                 <div class="metric">
                   <p class="k">Monthly vesting value (today)</p>
                   <p class="v" id="monthlyValue">—</p>
-                </div>
-              </div>
-
-              <!-- What your tokens are worth today -->
-              <div class="results-grid">
-                <div class="metric">
-                  <p class="k">Total grant value today</p>
-                  <p class="v" id="totalPaperValue">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k">Vested value today</p>
-                  <p class="v" id="worthTodayVested">—</p>
-                </div>
-              </div>
-
-              <!-- Tax liabilities -->
-              <div class="results-grid">
-                <div class="metric">
-                  <p class="k">Tax on monthly vesting (today)</p>
-                  <p class="v" id="monthlyTax">—</p>
-                </div>
-                <div class="metric">
-                  <p class="k">Tax on vested value today</p>
-                  <p class="v" id="taxOnVested">—</p>
                 </div>
               </div>
             </div>
@@ -348,43 +281,21 @@
       grantTokens: $("grantTokens"),
       currentPrice: $("currentPrice"),
       vestingYears: $("vestingYears"),
-      cliffMonths: $("cliffMonths"),
-      monthsSinceStart: $("monthsSinceStart"),
-      taxRate: $("taxRate"),
-      expectedValuation: $("expectedValuation"),
-      fdvSupply: $("fdvSupply"),
       calculate: $("calculate"),
 
       grantTokensField: $("grantTokensField"),
       currentPriceField: $("currentPriceField"),
       vestingYearsField: $("vestingYearsField"),
-      cliffMonthsField: $("cliffMonthsField"),
-      monthsSinceStartField: $("monthsSinceStartField"),
-      taxRateField: $("taxRateField"),
-      expectedValuationField: $("expectedValuationField"),
-      fdvSupplyField: $("fdvSupplyField"),
 
       results: $("results"),
       resultsHint: $("resultsHint"),
 
-      impliedExitPrice: $("impliedExitPrice"),
-      expectedExitValue: $("expectedExitValue"),
       totalPaperValue: $("totalPaperValue"),
-      worthTodayVested: $("worthTodayVested"),
       monthlyTokens: $("monthlyTokens"),
       monthlyValue: $("monthlyValue"),
-      monthlyTax: $("monthlyTax"),
-      taxOnVested: $("taxOnVested"),
     };
 
     let hasCalculated = false;
-
-    function toNumber(inputEl) {
-      if (!inputEl) return 0;
-      const raw = (inputEl.value || "").toString().replace(/,/g, "");
-      const val = parseFloat(raw);
-      return Number.isFinite(val) ? val : 0;
-    }
 
     function toNumberOrNaN(inputEl) {
       const raw = (inputEl?.value || "").toString().replace(/,/g, "").trim();
@@ -436,11 +347,6 @@
         els.grantTokens.value,
         els.currentPrice.value,
         els.vestingYears.value,
-        els.cliffMonths.value,
-        els.monthsSinceStart.value,
-        els.taxRate.value,
-        els.expectedValuation.value,
-        els.fdvSupply.value,
       ].every((v) => !String(v || "").trim());
       return allEmpty;
     }
@@ -449,46 +355,20 @@
       const grantTokens = toNumberOrNaN(els.grantTokens);
       const currentPrice = toNumberOrNaN(els.currentPrice);
       const vestingYears = toNumberOrNaN(els.vestingYears);
-      const cliffMonths = toNumberOrNaN(els.cliffMonths);
-      const monthsSinceStart = toNumberOrNaN(els.monthsSinceStart);
-      const expectedValuation = toNumberOrNaN(els.expectedValuation);
-      const fdvSupply = toNumberOrNaN(els.fdvSupply);
-
-      const taxRatePercentRaw = (els.taxRate.value || "").trim();
-      const taxRatePercent = taxRatePercentRaw ? toNumberOrNaN(els.taxRate) : NaN;
 
       const grantValid = Number.isFinite(grantTokens) && grantTokens > 0;
       const priceValid = Number.isFinite(currentPrice) && currentPrice >= 0;
       const vestingYearsValid = Number.isFinite(vestingYears) && vestingYears > 0;
       const totalVestingMonths = vestingYearsValid ? vestingYears * 12 : NaN;
 
-      const cliffValid = Number.isFinite(cliffMonths) && cliffMonths >= 0 && Number.isFinite(totalVestingMonths) && cliffMonths <= totalVestingMonths;
-      const monthsSinceValid = Number.isFinite(monthsSinceStart) && monthsSinceStart >= 0;
-      const expectedValuationValid = Number.isFinite(expectedValuation) && expectedValuation > 0;
-      const fdvSupplyValid = Number.isFinite(fdvSupply) && fdvSupply > 0;
-
-      const taxRateValid =
-        !taxRatePercentRaw ||
-        (Number.isFinite(taxRatePercent) && taxRatePercent >= 0 && taxRatePercent <= 100);
-
       setFieldValidity(els.grantTokensField, grantValid, { showErrors });
       setFieldValidity(els.currentPriceField, priceValid, { showErrors });
       setFieldValidity(els.vestingYearsField, vestingYearsValid, { showErrors });
-      setFieldValidity(els.cliffMonthsField, cliffValid, { showErrors });
-      setFieldValidity(els.monthsSinceStartField, monthsSinceValid, { showErrors });
-      setFieldValidity(els.expectedValuationField, expectedValuationValid, { showErrors });
-      setFieldValidity(els.fdvSupplyField, fdvSupplyValid, { showErrors });
-      setFieldValidity(els.taxRateField, taxRateValid, { showErrors });
 
       const allValid = [
         grantValid,
         priceValid,
         vestingYearsValid,
-        cliffValid,
-        monthsSinceValid,
-        expectedValuationValid,
-        fdvSupplyValid,
-        taxRateValid,
       ].every(Boolean);
 
       return {
@@ -497,11 +377,6 @@
         currentPrice: priceValid ? currentPrice : 0,
         vestingYears: vestingYearsValid ? vestingYears : 0,
         totalVestingMonths: Number.isFinite(totalVestingMonths) ? totalVestingMonths : 0,
-        cliffMonths: cliffValid ? cliffMonths : 0,
-        monthsSinceStart: monthsSinceValid ? monthsSinceStart : 0,
-        expectedValuation: expectedValuationValid ? expectedValuation : 0,
-        fdvSupply: fdvSupplyValid ? fdvSupply : 0,
-        taxRatePercent: taxRatePercentRaw ? (taxRateValid ? taxRatePercent : NaN) : NaN,
       };
     }
 
@@ -511,46 +386,17 @@
       // 1) Total grant value today (full paper value)
       const totalPaperValue = v.grantTokens * v.currentPrice;
 
-      // 2) Vested tokens today (cliff + linear)
-      let vestedMonths = 0;
-      if (v.monthsSinceStart >= v.cliffMonths) {
-        vestedMonths = Math.min(v.monthsSinceStart, totalVestingMonths);
-      }
-
-      const vestedTokens = totalVestingMonths > 0
-        ? v.grantTokens * (vestedMonths / totalVestingMonths)
-        : 0;
-
-      const worthTodayVested = vestedTokens * v.currentPrice;
-
-      // 3) Monthly vesting + monthly value
+      // 2) Monthly vesting + monthly value
       const monthlyTokens = totalVestingMonths > 0
         ? v.grantTokens / totalVestingMonths
         : 0;
 
       const monthlyValue = monthlyTokens * v.currentPrice;
 
-      // 4) Expected valuation at exit
-      const impliedExitPrice = v.fdvSupply > 0 ? (v.expectedValuation / v.fdvSupply) : 0;
-      const expectedExitValue = v.grantTokens * impliedExitPrice;
-
-      // 5) Tax estimates (optional)
-      const hasTax = Number.isFinite(v.taxRatePercent);
-      const taxRate = hasTax ? (v.taxRatePercent / 100) : 0;
-      const monthlyTax = monthlyValue * taxRate;
-      const taxOnVested = worthTodayVested * taxRate;
-
       // Update UI
       els.totalPaperValue.textContent = formatUSD(totalPaperValue);
-      els.worthTodayVested.textContent = formatUSD(worthTodayVested);
       els.monthlyTokens.textContent = formatNumber(monthlyTokens, { maximumFractionDigits: 4 });
       els.monthlyValue.textContent = formatUSD(monthlyValue);
-
-      els.impliedExitPrice.textContent = formatUSD(impliedExitPrice, { maximumFractionDigits: 4 });
-      els.expectedExitValue.textContent = formatUSD(expectedExitValue);
-
-      els.monthlyTax.textContent = hasTax ? formatUSD(monthlyTax) : "—";
-      els.taxOnVested.textContent = hasTax ? formatUSD(taxOnVested) : "—";
     }
 
     function validateAndMaybeCalculate({ shouldCalculate }) {
@@ -591,11 +437,6 @@
     els.grantTokens.addEventListener("input", liveUpdate);
     els.currentPrice.addEventListener("input", liveUpdate);
     els.vestingYears.addEventListener("input", liveUpdate);
-    els.cliffMonths.addEventListener("input", liveUpdate);
-    els.monthsSinceStart.addEventListener("input", liveUpdate);
-    els.taxRate.addEventListener("input", liveUpdate);
-    els.expectedValuation.addEventListener("input", liveUpdate);
-    els.fdvSupply.addEventListener("input", liveUpdate);
 
     els.calculate.addEventListener("click", () => {
       validateAndMaybeCalculate({ shouldCalculate: true });
