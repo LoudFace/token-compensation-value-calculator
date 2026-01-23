@@ -10,6 +10,7 @@
       --text-primary: #111827;
       --text-secondary: #4B5563;
       --border: #E5E7EB;
+      --background: #C8C8C8;
 
       --danger: #D92D20;
       --success: #079455;
@@ -73,6 +74,41 @@
     .stack-lg { gap: var(--space-24); }
     .row { display: flex; gap: var(--space-12); align-items: center; flex-wrap: wrap; }
     .row-between { justify-content: space-between; }
+    .calculator-panel { display: flex; flex-direction: column; }
+    .collapsible {
+      margin-top: var(--space-16);
+      overflow: hidden;
+      max-height: none;
+      opacity: 1;
+      transform: translateY(0);
+      transition: max-height 260ms ease, opacity 200ms ease, transform 200ms ease, margin-top 200ms ease;
+      will-change: max-height, opacity, transform;
+    }
+    .collapsible.is-collapsed {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      margin-top: 0;
+    }
+    .text-button {
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 999px;
+      transition: color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+    .text-button:hover {
+      color: var(--text-primary);
+      background: rgba(17, 24, 39, 0.06);
+    }
+    .text-button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
 
     .heading-xl { font-size: 28px; line-height: 1.2; margin: 0; letter-spacing: -0.02em; }
     .heading-md { font-size: 18px; line-height: 1.3; margin: 0; letter-spacing: -0.01em; }
@@ -217,44 +253,51 @@
         <div class="grid-2col">
           <!-- Calculator -->
           <div class="card">
-            <div class="stack">
+            <div class="calculator-panel">
               <div class="row row-between">
                 <h2 class="heading-md">Your details</h2>
-                <p class="text-muted text-sm">Estimates only.</p>
+                <div class="row">
+                  <p class="text-muted text-sm">Estimates only.</p>
+                  <button class="text-button" id="toggleCalculator" type="button" aria-expanded="true" aria-controls="calculatorBody">Hide details</button>
+                </div>
               </div>
 
-              <div class="form-field" id="tokenGrantField">
-                <label class="label" for="tokenGrant">Token grant (total tokens)</label>
-                <input class="input" id="tokenGrant" name="tokenGrant" inputmode="decimal" autocomplete="off" placeholder="e.g. 50000" />
-                <p class="error" id="tokenGrantError">Enter a valid token grant greater than 0.</p>
-              </div>
+              <div class="collapsible" id="calculatorBody">
+                <div class="stack">
+                  <div class="form-field" id="tokenGrantField">
+                    <label class="label" for="tokenGrant">Token grant (total tokens)</label>
+                    <input class="input" id="tokenGrant" name="tokenGrant" inputmode="decimal" autocomplete="off" placeholder="e.g. 50000" />
+                    <p class="error" id="tokenGrantError">Enter a valid token grant greater than 0.</p>
+                  </div>
 
-              <div class="form-field" id="expectedPriceField">
-                <label class="label" for="expectedPrice">Expected token price (USD)</label>
-                <input class="input" id="expectedPrice" name="expectedPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 1.50" />
-                <p class="error" id="expectedPriceError">Enter a valid expected price greater than 0.</p>
-              </div>
+                  <div class="form-field" id="expectedPriceField">
+                    <label class="label" for="expectedPrice">Expected token price (USD)</label>
+                    <input class="input" id="expectedPrice" name="expectedPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 1.50" />
+                    <p class="error" id="expectedPriceError">Enter a valid expected price greater than 0.</p>
+                  </div>
 
-              <div class="form-field" id="currentPriceField">
-                <label class="label" for="currentPrice">Current token price (USD)</label>
-                <input class="input" id="currentPrice" name="currentPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 0.25" />
-                <p class="error" id="currentPriceError">Enter a valid current price (0 or greater).</p>
-              </div>
+                  <div class="form-field" id="currentPriceField">
+                    <label class="label" for="currentPrice">Current token price (USD)</label>
+                    <input class="input" id="currentPrice" name="currentPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 0.25" />
+                    <p class="error" id="currentPriceError">Enter a valid current price (0 or greater).</p>
+                  </div>
 
-              <div class="form-field" id="vestingYearsField">
-                <label class="label" for="vestingYears">Vesting schedule (years)</label>
-                <input class="input" id="vestingYears" name="vestingYears" inputmode="decimal" autocomplete="off" placeholder="e.g. 4" />
-                <p class="help">Assumes straight-line monthly vesting.</p>
-                <p class="error" id="vestingYearsError">Enter a valid vesting length greater than 0.</p>
-              </div>
+                  <div class="form-field" id="vestingYearsField">
+                    <label class="label" for="vestingYears">Vesting schedule (years)</label>
+                    <input class="input" id="vestingYears" name="vestingYears" inputmode="decimal" autocomplete="off" placeholder="e.g. 4" />
+                    <p class="help">Assumes straight-line monthly vesting.</p>
+                    <p class="error" id="vestingYearsError">Enter a valid vesting length greater than 0.</p>
+                  </div>
 
-              <div class="form-field" id="taxRateField">
-                <label class="label" for="taxRate">Estimated tax rate (%)</label>
-                <input class="input" id="taxRate" name="taxRate" inputmode="decimal" autocomplete="off" placeholder="e.g. 30" />
-                <p class="error" id="taxRateError">Enter a tax rate between 0 and 100.</p>
-              </div>
+                  <div class="form-field" id="taxRateField">
+                    <label class="label" for="taxRate">Estimated tax rate (%)</label>
+                    <input class="input" id="taxRate" name="taxRate" inputmode="decimal" autocomplete="off" placeholder="e.g. 30" />
+                    <p class="error" id="taxRateError">Enter a tax rate between 0 and 100.</p>
+                  </div>
 
-              <button class="button" id="calculate" type="button">Calculate</button>
+                  <button class="button" id="calculate" type="button">Calculate</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -300,6 +343,8 @@
       vestingYears: document.getElementById("vestingYears"),
       taxRate: document.getElementById("taxRate"),
       calculate: document.getElementById("calculate"),
+      toggleCalculator: document.getElementById("toggleCalculator"),
+      calculatorBody: document.getElementById("calculatorBody"),
 
       tokenGrantField: document.getElementById("tokenGrantField"),
       expectedPriceField: document.getElementById("expectedPriceField"),
@@ -317,6 +362,7 @@
 
     const CURRENCY = "USD";
     let hasCalculated = false;
+    let calculatorCollapsed = false;
 
     let heightPostRaf = 0;
     function notifyParentHeight() {
@@ -339,7 +385,7 @@
             bodyRectH,
             htmlRectH,
           ));
-          window.parent.postMessage({ type: "cost-calculator:height", height }, "*");
+          window.parent.postMessage({ type: "token-calculator:height", height }, "*");
           heightPostRaf = 0;
         });
       } catch {
@@ -357,6 +403,43 @@
       } catch {
         return `${CURRENCY} ${Math.round(value).toLocaleString()}`;
       }
+    }
+
+    function setCalculatorCollapsed(collapsed, { animate = true } = {}) {
+      if (!els.calculatorBody || !els.toggleCalculator) return;
+      calculatorCollapsed = Boolean(collapsed);
+      els.toggleCalculator.setAttribute("aria-expanded", String(!calculatorCollapsed));
+      els.toggleCalculator.textContent = calculatorCollapsed ? "Show details" : "Hide details";
+
+      if (calculatorCollapsed) {
+        const currentHeight = els.calculatorBody.style.maxHeight === "none"
+          ? els.calculatorBody.scrollHeight
+          : els.calculatorBody.scrollHeight;
+        els.calculatorBody.style.maxHeight = `${currentHeight}px`;
+        if (!animate) {
+          els.calculatorBody.classList.add("is-collapsed");
+          els.calculatorBody.style.maxHeight = "0px";
+          notifyParentHeight();
+          return;
+        }
+        void els.calculatorBody.offsetHeight;
+        els.calculatorBody.classList.add("is-collapsed");
+        els.calculatorBody.style.maxHeight = "0px";
+      } else {
+        els.calculatorBody.classList.remove("is-collapsed");
+        if (!animate) {
+          els.calculatorBody.style.maxHeight = "none";
+          notifyParentHeight();
+          return;
+        }
+        els.calculatorBody.style.maxHeight = "0px";
+        requestAnimationFrame(() => {
+          els.calculatorBody.style.maxHeight = `${els.calculatorBody.scrollHeight}px`;
+          notifyParentHeight();
+        });
+      }
+
+      notifyParentHeight();
     }
 
     function parseNumber(raw) {
@@ -484,7 +567,27 @@
     }
 
     // Wire up
-    notifyParentHeight();
+    if (els.toggleCalculator && els.calculatorBody) {
+      const params = new URLSearchParams(window.location.search);
+      const startCollapsed = ["1", "true", "yes"].includes(
+        (params.get("collapsed") || "").toLowerCase()
+      );
+      setCalculatorCollapsed(startCollapsed, { animate: false });
+
+      els.toggleCalculator.addEventListener("click", () => {
+        setCalculatorCollapsed(!calculatorCollapsed);
+      });
+
+      els.calculatorBody.addEventListener("transitionend", (e) => {
+        if (e.propertyName !== "max-height") return;
+        if (!els.calculatorBody.classList.contains("is-collapsed")) {
+          els.calculatorBody.style.maxHeight = "none";
+        }
+        notifyParentHeight();
+      });
+    } else {
+      notifyParentHeight();
+    }
 
     // Continuously report height changes (fonts load, results expand, responsive wraps, etc.)
     try {
@@ -532,6 +635,13 @@
 
     // Keep expanded height correct on responsive reflow.
     window.addEventListener("resize", () => {
+      if (
+        els.calculatorBody
+        && !els.calculatorBody.classList.contains("is-collapsed")
+        && els.calculatorBody.style.maxHeight !== "none"
+      ) {
+        els.calculatorBody.style.maxHeight = `${els.calculatorBody.scrollHeight}px`;
+      }
       if (els.results.classList.contains("is-visible")) {
         // If we set max-height to none after transition, re-measure on resize.
         els.results.style.maxHeight = `${els.results.scrollHeight}px`;
