@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Token Grant Calculator</title>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
@@ -11,6 +10,7 @@
       --text-primary: #111827;
       --text-secondary: #4B5563;
       --border: #E5E7EB;
+
       --danger: #D92D20;
       --success: #079455;
 
@@ -38,7 +38,7 @@
       line-height: 1.5;
       margin: 0;
       color: var(--text-primary);
-
+      background: var(--background);
     }
 
     /* Webflow-style layout primitives (kept small on purpose) */
@@ -249,20 +249,23 @@
               <h2 class="heading-md">Results</h2>
             </div>
 
-            <!-- Results (only what’s required) -->
+            <!-- Results -->
             <div class="results" id="results" aria-hidden="true" style="max-height:0px;">
               <div class="results-grid">
                 <div class="metric">
                   <p class="k">Total grant value today</p>
-                  <p class="v" id="totalPaperValue">—</p>
+                  <p class="v" id="totalPaperValue">--</p>
                 </div>
                 <div class="metric">
                   <p class="k">Monthly vesting (tokens)</p>
-                  <p class="v" id="monthlyTokens">—</p>
+                  <p class="v" id="monthlyTokens">--</p>
                 </div>
+              </div>
+
+              <div class="results-grid">
                 <div class="metric">
                   <p class="k">Monthly vesting value (today)</p>
-                  <p class="v" id="monthlyValue">—</p>
+                  <p class="v" id="monthlyValue">--</p>
                 </div>
               </div>
             </div>
@@ -457,43 +460,6 @@
       }
     });
   </script>
-  <script>
-    (function () {
-      const TYPE = "token-calculator:height";
 
-      function sendHeight() {
-        const height = Math.max(
-          document.documentElement.scrollHeight,
-          document.body ? document.body.scrollHeight : 0
-        );
-
-        // pošalji visinu parent-u (Webflow)
-        window.parent.postMessage(
-          { type: TYPE, height },
-          "*"
-        );
-      }
-
-      // osnovni momenti
-      window.addEventListener("load", sendHeight);
-      window.addEventListener("resize", sendHeight);
-
-      // hvata promene layouta (najbitnije)
-      if ("ResizeObserver" in window) {
-        const ro = new ResizeObserver(sendHeight);
-        ro.observe(document.documentElement);
-      } else {
-        setInterval(sendHeight, 500);
-      }
-
-      // hvata animacije (max-height transition)
-      document.addEventListener("transitionend", sendHeight, true);
-
-      // “nudge” posle load-a (fontovi, wrap, itd.)
-      setTimeout(sendHeight, 50);
-      setTimeout(sendHeight, 200);
-      setTimeout(sendHeight, 800);
-    })();
-  </script>
 </body>
 </html>
